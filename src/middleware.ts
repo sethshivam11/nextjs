@@ -7,7 +7,7 @@ export const config = {
 };
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request });
+  const token = await getToken({ req: request, secret: process.env.NEXT_AUTH_SECRET });
   const url = request.nextUrl;
 
   // Redirect to dashboard if the user is already authenticated
@@ -18,11 +18,13 @@ export async function middleware(request: NextRequest) {
       url.pathname.startsWith("/sign-up") ||
       url.pathname.startsWith("/verify") ||
       url.pathname === "/")
-  ) {
+    ) {
+    console.log("Redirect to dashboard")
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   if (!token && url.pathname.startsWith("/dashboard")) {
+    console.log("Redirect to sign-in")
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 

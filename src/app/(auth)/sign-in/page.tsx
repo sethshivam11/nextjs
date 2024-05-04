@@ -4,16 +4,12 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
 import React from "react";
-import { useDebounceCallback } from "usehooks-ts";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { signInSchema } from "@/schemas/signInSchema";
-import axios, { AxiosError } from "axios";
-import { ApiResponse } from "@/types/ApiResponse";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -42,24 +38,26 @@ const Page = () => {
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
     setIsSubmitting(true);
     const result = await signIn("credentials", {
-        identifier: data.identifier,
-        password: data.password,
-        redirect: false
-    })
-    console.log(result); // REMOVE
-    if(result?.error){
-        toast({
-            title: "Login failed",
-            description: result.error || "Incorrect username or password",
-            variant: "destructive"
-        })
-    } 
-    
-    if(result?.url){
-        router.replace("/dashboard");
+      identifier: data.identifier,
+      password: data.password,
+      redirect: true,
+    });
+    console.log(result);
+
+    if (result?.error) {
+      toast({
+        title: "Login failed",
+        description: result.error || "Incorrect username or password",
+        variant: "destructive",
+      });
     }
+
+    if (result?.url) {
+      router.replace("/dashboard");
+    }
+
     setIsSubmitting(false);
-};
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-200">
@@ -112,8 +110,12 @@ const Page = () => {
         </Form>
         <div className="text-center mt-4">
           <p>
-            Already a member?
-            <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
+            Already a member?&nbsp;
+            <Link
+              href="/sign-up"
+              type="button"
+              className="text-blue-600 hover:text-blue-800"
+            >
               Sign in
             </Link>
           </p>

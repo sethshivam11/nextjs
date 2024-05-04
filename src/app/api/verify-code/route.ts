@@ -18,11 +18,12 @@ export async function POST(request: Request) {
 
     const queryParam = {
       username: decodedUsername,
-      verifyCode: code,
+      verifyCode: { code },
     };
 
     // validate with zod
     const result = QuerySchema.safeParse(queryParam);
+    console.log(result.error?.issues[0]?.path);
     if (!result.success) {
       const usernameErrors = result.error.format().username?._errors || [];
       return Response.json(
@@ -81,7 +82,6 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-    
   } catch (error) {
     console.error("Error checking username", error);
     return Response.json(

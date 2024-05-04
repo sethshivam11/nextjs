@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
         const user = await UserModel.aggregate([
             {
-                $match: { id: userId }
+                $match: { _id: userId }
             },
             {
                 $unwind: "$messages"
