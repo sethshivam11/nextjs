@@ -23,7 +23,6 @@ export async function POST(request: Request) {
 
     // validate with zod
     const result = QuerySchema.safeParse(queryParam);
-    console.log(result.error?.issues[0]?.path);
     if (!result.success) {
       const usernameErrors = result.error.format().username?._errors || [];
       return Response.json(
@@ -52,8 +51,9 @@ export async function POST(request: Request) {
 
     const isCodeValid = user.verifyCode === code;
     const isCodeNotExpired = new Date(user.verifyCodeExpiry) > new Date();
+    console.log(isCodeValid, isCodeNotExpired)
 
-    if (!isCodeValid || !isCodeNotExpired) {
+    if (isCodeValid && isCodeNotExpired) {
       user.isVerified = true;
       await user.save();
 
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
       );
     }
   } catch (error) {
-    console.error("Error checking username", error);
+    console.log("Error checking username", error);
     return Response.json(
       {
         success: false,
